@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
@@ -17,18 +17,10 @@ export function Hero() {
             updates - all in one place.
           </p>
           <div className="flex gap-4 pt-2">
-            <Link
-              href="/search"
-              className="rounded-full bg-black px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-black/80"
-            >
-              Browse Articles
-            </Link>
-            <Link
-              href="/subscribe"
-              className="rounded-full border border-black/15 px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-black/5"
-            >
+            <Button href="/search">Browse Articles</Button>
+            <Button href="/subscribe" variant="secondary">
               Subscribe
-            </Link>
+            </Button>
           </div>
         </div>
 
