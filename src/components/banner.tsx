@@ -1,32 +1,27 @@
 import { fetchAPI } from "@/lib/api";
 
-interface Article {
+interface BreakingNews {
   id: string;
-  title: string;
-  slug: string;
-  excerpt: string;
+  headline: string;
+  summary: string;
+  articleId: string;
   category: string;
-  image: string;
   publishedAt: string;
-  featured: boolean;
+  urgent: boolean;
 }
 
 export async function Banner() {
-  const articles = await fetchAPI<Article[]>("/articles", {
-    featured: "true",
-  });
+  const news = await fetchAPI<BreakingNews>("/breaking-news");
 
-  const featured = articles[0];
-
-  if (!featured) return null;
+  if (!news) return null;
 
   return (
     <div className="w-full bg-black px-4 py-3 text-center text-sm text-white">
       <p className="flex items-center justify-center gap-3">
         <span className="rounded-full bg-white px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wider text-black">
-          {featured.category}
+          {news.category}
         </span>
-        <span className="font-medium">{featured.title}</span>
+        <span className="font-medium">{news.headline}</span>
       </p>
     </div>
   );
