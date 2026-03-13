@@ -39,7 +39,7 @@ export async function FeaturedArticles() {
           {displayed.map((article) => (
             <Link
               key={article.id}
-              href={`/article/${article.slug}`}
+              href={`/articles/${article.id}`}
               className="group flex flex-col overflow-hidden rounded-2xl border border-black/10 transition-shadow hover:shadow-lg"
             >
               <div className="relative aspect-video w-full overflow-hidden bg-black/5">
