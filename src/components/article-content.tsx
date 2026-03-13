@@ -1,4 +1,47 @@
 import type { ContentBlock } from "@/lib/types";
+import React from "react";
+import Link from "next/link";
+
+function parseInlineMarkdown(text: string): React.ReactNode[] {
+  const tokens: React.ReactNode[] = [];
+  const regex = /\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      tokens.push(text.slice(lastIndex, match.index));
+    }
+
+    if (match[1]) {
+      tokens.push(
+        <strong key={match.index} className="font-semibold text-black">
+          {match[1]}
+        </strong>,
+      );
+    } else if (match[2] && match[3]) {
+      tokens.push(
+        <Link
+          key={match.index}
+          href={match[3]}
+          className="underline underline-offset-2 hover:text-black"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {match[2]}
+        </Link>,
+      );
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    tokens.push(text.slice(lastIndex));
+  }
+
+  return tokens;
+}
 
 function renderBlock(block: ContentBlock, index: number) {
   switch (block.type) {
@@ -11,21 +54,21 @@ function renderBlock(block: ContentBlock, index: number) {
           key={index}
           className="mt-8 mb-4 text-2xl font-bold text-black"
         >
-          {block.text}
+          {parseInlineMarkdown(block.text)}
         </HeadingTag>
       );
     }
     case "paragraph":
       return (
         <p key={index} className="leading-relaxed text-black/70">
-          {block.text}
+          {parseInlineMarkdown(block.text)}
         </p>
       );
     case "unordered-list":
       return (
         <ul key={index} className="list-disc space-y-2 pl-6 text-black/70">
           {block.items.map((item, i) => (
-            <li key={i}>{item}</li>
+            <li key={i}>{parseInlineMarkdown(item)}</li>
           ))}
         </ul>
       );
@@ -33,7 +76,7 @@ function renderBlock(block: ContentBlock, index: number) {
       return (
         <ol key={index} className="list-decimal space-y-2 pl-6 text-black/70">
           {block.items.map((item, i) => (
-            <li key={i}>{item}</li>
+            <li key={i}>{parseInlineMarkdown(item)}</li>
           ))}
         </ol>
       );
@@ -42,7 +85,13 @@ function renderBlock(block: ContentBlock, index: number) {
   }
 }
 
-export function ArticleContent({ content, tags }: { content: ContentBlock[]; tags: string[] }) {
+export function ArticleContent({
+  content,
+  tags,
+}: {
+  content: ContentBlock[];
+  tags: string[];
+}) {
   return (
     <>
       <div className="prose-lg space-y-6">
