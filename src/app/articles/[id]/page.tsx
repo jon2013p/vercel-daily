@@ -5,6 +5,7 @@ import type { Article } from "@/lib/types";
 import { ArticleHeader } from "@/components/article-header";
 import { ArticleFeaturedImage } from "@/components/article-featured-image";
 import { ArticleContent } from "@/components/article-content";
+import { TrendingArticles } from "@/components/trending-articles";
 
 type Params = Promise<{ id: string }>;
 
@@ -49,6 +50,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <ArticleHeader article={article} />
         <ArticleFeaturedImage src={article.image} alt={article.title} />
         <ArticleContent content={article.content} tags={article.tags} />
+        <TrendingArticles />
       </div>
     </article>
   );
