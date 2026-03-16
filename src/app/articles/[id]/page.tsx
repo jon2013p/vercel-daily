@@ -1,11 +1,12 @@
 import { fetchAPI } from "@/lib/api";
+import { getSubscription } from "@/lib/subscription";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Article } from "@/lib/types";
 import { ArticleHeader } from "@/components/article-header";
 import { ArticleFeaturedImage } from "@/components/article-featured-image";
 import { ArticleContent } from "@/components/article-content";
-import { SubscribeCTA } from "@/components/subscribe-cta";
+import { ArticlePaywall } from "@/components/article-paywall";
 import { TrendingArticles } from "@/components/trending-articles";
 
 type Params = Promise<{ id: string }>;
@@ -41,17 +42,25 @@ export async function generateMetadata({
 
 export default async function ArticlePage({ params }: { params: Params }) {
   const { id } = await params;
-  const article = await getArticle(id);
+  const [article, { isSubscribed }] = await Promise.all([
+    getArticle(id),
+    getSubscription(),
+  ]);
 
   if (!article) notFound();
 
   return (
     <article className="w-full bg-white py-16">
       <div className="mx-auto max-w-3xl px-6">
-        <ArticleHeader article={article} />
-        <ArticleFeaturedImage src={article.image} alt={article.title} />
-        <ArticleContent content={article.content} tags={article.tags} />
-        <SubscribeCTA />
+        {isSubscribed ? (
+          <>
+            <ArticleHeader article={article} />
+            <ArticleFeaturedImage src={article.image} alt={article.title} />
+            <ArticleContent content={article.content} tags={article.tags} />
+          </>
+        ) : (
+          <ArticlePaywall article={article} />
+        )}
         <TrendingArticles />
       </div>
     </article>
