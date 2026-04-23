@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -58,7 +59,22 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
+        <Suspense
+          fallback={
+            <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white py-6">
+              <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+                <div className="h-8 w-[140px] animate-pulse rounded bg-black/5" />
+                <div className="flex items-center gap-8">
+                  <div className="h-5 w-12 animate-pulse rounded bg-black/5" />
+                  <div className="h-5 w-14 animate-pulse rounded bg-black/5" />
+                  <div className="h-9 w-24 animate-pulse rounded-full bg-black/5" />
+                </div>
+              </nav>
+            </header>
+          }
+        >
+          <Header />
+        </Suspense>
         {children}
         <Footer />
       </body>

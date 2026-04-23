@@ -1,8 +1,13 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { fetchAPI } from "@/lib/api";
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "@/components/article-card";
 
 export async function FeaturedArticles() {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("articles");
+
   const articles = await fetchAPI<Article[]>("/articles");
 
   const displayed = articles.slice(0, 6);

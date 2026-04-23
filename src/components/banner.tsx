@@ -1,3 +1,4 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { fetchAPI } from "@/lib/api";
 
 interface BreakingNews {
@@ -11,6 +12,10 @@ interface BreakingNews {
 }
 
 export async function Banner() {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("breaking-news");
+
   const news = await fetchAPI<BreakingNews>("/breaking-news");
 
   if (!news) return null;
