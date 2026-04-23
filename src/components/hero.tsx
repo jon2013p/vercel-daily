@@ -1,7 +1,11 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { getSubscription } from "@/lib/subscription";
+import { SubscriptionButton } from "@/components/subscription-button";
 
-export function Hero() {
+export async function Hero() {
+  const { isSubscribed } = await getSubscription();
+
   return (
     <section className="w-full bg-white">
       <div className="mx-auto grid max-w-7xl gap-8 px-6 py-20 lg:grid-cols-2 lg:items-center lg:gap-16 lg:py-28">
@@ -18,9 +22,7 @@ export function Hero() {
           </p>
           <div className="flex gap-4 pt-2">
             <Button href="/search">Browse Articles</Button>
-            <Button href="/subscribe" variant="secondary">
-              Subscribe
-            </Button>
+            <SubscriptionButton isSubscribed={isSubscribed} />
           </div>
         </div>
 
