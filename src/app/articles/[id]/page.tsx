@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
+import { headers } from "next/headers";
 import { fetchAPI } from "@/lib/api";
 import { getSubscription } from "@/lib/subscription";
 import { notFound } from "next/navigation";
@@ -48,12 +49,17 @@ export async function generateMetadata({
 
 async function ArticleView({ params }: { params: Params }) {
   const { id } = await params;
-  const [article, { isSubscribed }] = await Promise.all([
-    getArticle(id),
-    getSubscription(),
-  ]);
+  const reqHeaders = await headers();
+  const status = reqHeaders.get("x-subscription-status");
 
+  const article = await getArticle(id);
   if (!article) notFound();
+
+  if (status === "anonymous") {
+    return <ArticlePaywall article={article} />;
+  }
+
+  const { isSubscribed } = await getSubscription();
 
   if (isSubscribed) {
     return (
