@@ -9,6 +9,11 @@ import { SearchResultsSkeleton } from "@/components/search-results-skeleton";
 export const metadata: Metadata = {
   title: "Search",
   description: "Search articles, tutorials, and updates across Vercel Daily.",
+  openGraph: {
+    title: "Search",
+    description:
+      "Search articles, tutorials, and updates across Vercel Daily.",
+  },
 };
 
 interface Category {
