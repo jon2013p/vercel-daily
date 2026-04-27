@@ -1,5 +1,3 @@
-"use client";
-
 import Link from "next/link";
 import Image from "next/image";
 
@@ -17,7 +15,7 @@ export function Footer() {
         </Link>
 
         <p className="text-sm text-black/60">
-          &copy; {new Date().getFullYear()} Vercel Daily. All rights reserved.
+          &copy; 2026 Vercel Daily. All rights reserved.
         </p>
       </div>
     </footer>
