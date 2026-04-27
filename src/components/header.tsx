@@ -1,6 +1,6 @@
+import { cacheLife } from "next/cache";
 import Link from "next/link";
 import Image from "next/image";
-import { getSubscription } from "@/lib/subscription";
 import { SubscriptionButton } from "@/components/subscription-button";
 
 const links = [
@@ -17,7 +17,8 @@ const links = [
 ];
 
 export async function Header() {
-  const { isSubscribed } = await getSubscription();
+  "use cache";
+  cacheLife("days");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white py-6">
@@ -44,7 +45,7 @@ export async function Header() {
             </li>
           ))}
           <li>
-            <SubscriptionButton isSubscribed={isSubscribed} />
+            <SubscriptionButton />
           </li>
         </ul>
       </nav>

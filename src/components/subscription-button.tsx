@@ -1,26 +1,39 @@
 "use client";
 
-import { useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { subscribe, unsubscribe } from "@/app/actions/subscription";
+import {
+  subscribe,
+  unsubscribe,
+  checkSubscription,
+} from "@/app/actions/subscription";
 
-export function SubscriptionButton({
-  isSubscribed,
-}: {
-  isSubscribed: boolean;
-}) {
+export function SubscriptionButton() {
+  const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  useEffect(() => {
+    checkSubscription().then(setIsSubscribed);
+  }, []);
 
   function handleClick() {
     startTransition(async () => {
       if (isSubscribed) {
         await unsubscribe();
+        setIsSubscribed(false);
       } else {
         await subscribe();
+        setIsSubscribed(true);
       }
       router.refresh();
     });
+  }
+
+  if (isSubscribed === null) {
+    return (
+      <span className="inline-block h-9 w-24 animate-pulse rounded-full bg-black/5" />
+    );
   }
 
   if (isSubscribed) {

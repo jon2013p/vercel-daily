@@ -10,6 +10,11 @@ import {
 } from "@/lib/subscription";
 import { revalidatePath } from "next/cache";
 
+export async function checkSubscription() {
+  const { isSubscribed } = await getSubscription();
+  return isSubscribed;
+}
+
 export async function subscribe() {
   const { token: existingToken } = await getSubscription();
 

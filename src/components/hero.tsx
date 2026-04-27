@@ -1,10 +1,11 @@
+import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { getSubscription } from "@/lib/subscription";
 import { SubscriptionButton } from "@/components/subscription-button";
 
 export async function Hero() {
-  const { isSubscribed } = await getSubscription();
+  "use cache";
+  cacheLife("days");
 
   return (
     <section className="w-full bg-white">
@@ -22,7 +23,7 @@ export async function Hero() {
           </p>
           <div className="flex gap-4 pt-2">
             <Button href="/search">Browse Articles</Button>
-            <SubscriptionButton isSubscribed={isSubscribed} />
+            <SubscriptionButton />
           </div>
         </div>
 
