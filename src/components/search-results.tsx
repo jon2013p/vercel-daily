@@ -2,16 +2,6 @@ import { fetchAPI } from "@/lib/api";
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "@/components/article-card";
 
-function matchesQuery(article: Article, query: string): boolean {
-  const q = query.toLowerCase();
-  return (
-    article.title.toLowerCase().includes(q) ||
-    article.excerpt.toLowerCase().includes(q) ||
-    article.category.toLowerCase().includes(q) ||
-    article.tags.some((tag) => tag.toLowerCase().includes(q))
-  );
-}
-
 export async function SearchResults({
   query,
   category,
@@ -19,16 +9,11 @@ export async function SearchResults({
   query: string;
   category: string;
 }) {
-  const params: Record<string, string> = {};
+  const params: Record<string, string> = { limit: "5" };
   if (category) params.category = category;
+  if (query) params.search = query;
 
-  const articles = await fetchAPI<Article[]>("/articles", params);
-
-  const filtered = query
-    ? articles.filter((a) => matchesQuery(a, query))
-    : articles;
-
-  const displayed = filtered.slice(0, 5);
+  const displayed = await fetchAPI<Article[]>("/articles", params);
 
   if (displayed.length === 0) {
     return (
