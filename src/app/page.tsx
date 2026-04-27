@@ -1,7 +1,19 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import { Banner } from "@/components/banner";
 import { Hero } from "@/components/hero";
 import { FeaturedArticles } from "@/components/featured-articles";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description:
+    "Browse the latest articles, tutorials, and updates from the Vercel ecosystem.",
+  openGraph: {
+    title: "Vercel Daily — Home",
+    description:
+      "Browse the latest articles, tutorials, and updates from the Vercel ecosystem.",
+  },
+};
 
 function BannerSkeleton() {
   return (
