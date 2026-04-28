@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
   subscribe,
   unsubscribe,
@@ -11,7 +10,6 @@ import {
 export function SubscriptionButton() {
   const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   useEffect(() => {
     checkSubscription().then(setIsSubscribed);
@@ -26,7 +24,6 @@ export function SubscriptionButton() {
         await subscribe();
         setIsSubscribed(true);
       }
-      router.refresh();
     });
   }
 
