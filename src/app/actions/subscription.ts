@@ -1,28 +1,26 @@
 "use server";
 
+import { cookies } from "next/headers";
 import {
   createSubscription,
   activateSubscription,
   deactivateSubscription,
   setSubscriptionCookie,
   removeSubscriptionCookie,
-  getSubscription,
 } from "@/lib/subscription";
 import { revalidatePath } from "next/cache";
 
+const COOKIE_NAME = "subscription_token";
+
 export async function checkSubscription() {
-  const { isSubscribed } = await getSubscription();
-  return isSubscribed;
+  const cookieStore = await cookies();
+  return !!cookieStore.get(COOKIE_NAME)?.value;
 }
 
 export async function subscribe() {
-  const { token: existingToken } = await getSubscription();
-
-  let token = existingToken;
-
-  if (!token) {
-    token = await createSubscription();
-  }
+  const cookieStore = await cookies();
+  const token =
+    cookieStore.get(COOKIE_NAME)?.value ?? (await createSubscription());
 
   await activateSubscription(token);
   await setSubscriptionCookie(token);
@@ -30,7 +28,8 @@ export async function subscribe() {
 }
 
 export async function unsubscribe() {
-  const { token } = await getSubscription();
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
 
   if (token) {
     await deactivateSubscription(token);
