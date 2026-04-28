@@ -1,16 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
-import { subscribe } from "@/app/actions/subscription";
+import { useSubscription } from "@/components/subscription-provider";
 
 export function SubscribeCTA() {
-  const [isPending, startTransition] = useTransition();
-
-  function handleSubscribe() {
-    startTransition(async () => {
-      await subscribe();
-    });
-  }
+  const { isPending, subscribe } = useSubscription();
 
   return (
     <div className="mt-12 rounded-2xl border border-black/10 bg-black p-8 text-center sm:p-10">
@@ -22,11 +15,11 @@ export function SubscribeCTA() {
         Subscribe to unlock full access.
       </p>
       <button
-        onClick={handleSubscribe}
+        onClick={subscribe}
         disabled={isPending}
         className="rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition-colors hover:bg-white/90 disabled:opacity-50"
       >
-        {isPending ? "Subscribing..." : "Subscribe to Vercel Daily"}
+        Subscribe to Vercel Daily
       </button>
     </div>
   );

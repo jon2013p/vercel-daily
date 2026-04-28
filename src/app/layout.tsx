@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { SubscriptionProvider } from "@/components/subscription-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,6 +60,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <SubscriptionProvider>
         <Suspense
           fallback={
             <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white py-6">
@@ -77,6 +79,7 @@ export default function RootLayout({
         </Suspense>
         {children}
         <Footer />
+        </SubscriptionProvider>
       </body>
     </html>
   );
