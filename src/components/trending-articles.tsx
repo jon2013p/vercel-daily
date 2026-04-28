@@ -3,12 +3,23 @@ import { fetchAPI } from "@/lib/api";
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "@/components/article-card";
 
-export async function TrendingArticles() {
+async function getTrendingArticles() {
   "use cache";
   cacheLife("minutes");
   cacheTag("trending");
 
-  const articles = await fetchAPI<Article[]>("/articles/trending");
+  return fetchAPI<Article[]>("/articles/trending");
+}
+
+export async function TrendingArticles({
+  excludeId,
+}: {
+  excludeId?: string;
+}) {
+  const allArticles = await getTrendingArticles();
+  const articles = excludeId
+    ? allArticles.filter((a) => a.id !== excludeId)
+    : allArticles;
 
   if (!articles.length) return null;
 

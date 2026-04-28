@@ -74,7 +74,9 @@ async function ArticleView({ params }: { params: Params }) {
   return <ArticlePaywall article={article} />;
 }
 
-export default function ArticlePage({ params }: { params: Params }) {
+export default async function ArticlePage({ params }: { params: Params }) {
+  const { id } = await params;
+
   return (
     <article className="w-full bg-white py-16">
       <div className="mx-auto max-w-3xl px-6">
@@ -117,7 +119,7 @@ export default function ArticlePage({ params }: { params: Params }) {
             </div>
           }
         >
-          <TrendingArticles />
+          <TrendingArticles excludeId={id} />
         </Suspense>
       </div>
     </article>
