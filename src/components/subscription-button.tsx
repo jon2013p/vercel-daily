@@ -1,46 +1,43 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-import {
-  subscribe,
-  unsubscribe,
-  checkSubscription,
-} from "@/app/actions/subscription";
+import { useEffect, useOptimistic, useState, useTransition } from "react";
+import { subscribe, unsubscribe } from "@/app/actions/subscription";
+
+function readStatusCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split("; ").some((c) => c === "subscribed=1");
+}
 
 export function SubscriptionButton() {
-  const [isSubscribed, setIsSubscribed] = useState<boolean | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [optimistic, setOptimistic] = useOptimistic(isSubscribed);
   const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    checkSubscription().then(setIsSubscribed);
+    setIsSubscribed(readStatusCookie());
   }, []);
 
   function handleClick() {
+    const next = !optimistic;
     startTransition(async () => {
-      if (isSubscribed) {
+      setOptimistic(next);
+      if (optimistic) {
         await unsubscribe();
-        setIsSubscribed(false);
       } else {
         await subscribe();
-        setIsSubscribed(true);
       }
+      setIsSubscribed(next);
     });
   }
 
-  if (isSubscribed === null) {
-    return (
-      <span className="inline-block h-9 w-24 animate-pulse rounded-full bg-black/5" />
-    );
-  }
-
-  if (isSubscribed) {
+  if (optimistic) {
     return (
       <button
         onClick={handleClick}
         disabled={isPending}
         className="rounded-full bg-black/5 px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-red-50 hover:text-red-600 disabled:opacity-50"
       >
-        {isPending ? "Unsubscribing\u2026" : "Subscribed"}
+        Subscribed
       </button>
     );
   }
@@ -51,7 +48,7 @@ export function SubscriptionButton() {
       disabled={isPending}
       className="rounded-full bg-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-black/80 disabled:opacity-50"
     >
-      {isPending ? "Subscribing\u2026" : "Subscribe"}
+      Subscribe
     </button>
   );
 }

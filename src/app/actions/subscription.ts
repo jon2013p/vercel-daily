@@ -12,11 +12,6 @@ import { revalidatePath } from "next/cache";
 
 const COOKIE_NAME = "subscription_token";
 
-export async function checkSubscription() {
-  const cookieStore = await cookies();
-  return !!cookieStore.get(COOKIE_NAME)?.value;
-}
-
 export async function subscribe() {
   const cookieStore = await cookies();
   const token =

@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 
 const COOKIE_NAME = "subscription_token";
+const STATUS_COOKIE = "subscribed";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
 const BASE_URL = process.env.API_BASE_URL;
@@ -68,22 +69,26 @@ export async function deactivateSubscription(token: string) {
 
 export async function setSubscriptionCookie(token: string) {
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, token, {
-    httpOnly: true,
+  const shared = {
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "lax" as const,
     maxAge: COOKIE_MAX_AGE,
     path: "/",
-  });
+  };
+
+  cookieStore.set(COOKIE_NAME, token, { ...shared, httpOnly: true });
+  cookieStore.set(STATUS_COOKIE, "1", { ...shared, httpOnly: false });
 }
 
 export async function removeSubscriptionCookie() {
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, "", {
-    httpOnly: true,
+  const shared = {
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: "lax" as const,
     maxAge: 0,
     path: "/",
-  });
+  };
+
+  cookieStore.set(COOKIE_NAME, "", { ...shared, httpOnly: true });
+  cookieStore.set(STATUS_COOKIE, "", { ...shared, httpOnly: false });
 }
