@@ -1,6 +1,19 @@
+import { cacheLife, cacheTag } from "next/cache";
 import { fetchAPI } from "@/lib/api";
 import type { Article } from "@/lib/types";
 import { ArticleCard } from "@/components/article-card";
+
+async function searchArticles(query: string, category: string) {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("search-results");
+
+  const params: Record<string, string> = { limit: "5" };
+  if (category) params.category = category;
+  if (query) params.search = query;
+
+  return fetchAPI<Article[]>("/articles", params);
+}
 
 export async function SearchResults({
   query,
@@ -9,11 +22,7 @@ export async function SearchResults({
   query: string;
   category: string;
 }) {
-  const params: Record<string, string> = { limit: "5" };
-  if (category) params.category = category;
-  if (query) params.search = query;
-
-  const displayed = await fetchAPI<Article[]>("/articles", params);
+  const displayed = await searchArticles(query, category);
 
   if (displayed.length === 0) {
     return (
