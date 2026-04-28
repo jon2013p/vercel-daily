@@ -20,7 +20,7 @@ export function ArticleCard({
   return (
     <Link
       href={`/articles/${article.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white transition-shadow hover:shadow-lg"
+      className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white transition-shadow hover:shadow-lg"
     >
       <div className="relative aspect-video w-full overflow-hidden bg-black/5">
         <Image
