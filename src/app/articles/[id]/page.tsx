@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
 import { fetchAPI } from "@/lib/api";
-import { getSubscription } from "@/lib/subscription";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Article } from "@/lib/types";
@@ -48,9 +47,7 @@ async function ArticleView({ params }: { params: Params }) {
   const article = await getArticle(id);
   if (!article) notFound();
 
-  const { isSubscribed } = await getSubscription();
-
-  return <ArticleGate article={article} isSubscribed={isSubscribed} />;
+  return <ArticleGate article={article} />;
 }
 
 async function TrendingWithExclusion({ params }: { params: Params }) {

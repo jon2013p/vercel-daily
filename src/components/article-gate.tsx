@@ -7,16 +7,10 @@ import { ArticleContent } from "@/components/article-content";
 import { ArticlePaywall } from "@/components/article-paywall";
 import type { Article } from "@/lib/types";
 
-export function ArticleGate({
-  article,
-  isSubscribed: serverIsSubscribed,
-}: {
-  article: Article;
-  isSubscribed: boolean;
-}) {
+export function ArticleGate({ article }: { article: Article }) {
   const { confirmedSubscribed } = useSubscription();
 
-  if (confirmedSubscribed || serverIsSubscribed) {
+  if (confirmedSubscribed) {
     return (
       <>
         <ArticleHeader article={article} />

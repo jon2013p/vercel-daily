@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useOptimistic,
   useState,
   useTransition,
@@ -30,19 +29,16 @@ const SubscriptionContext = createContext<SubscriptionContextValue>({
   unsubscribe: () => {},
 });
 
-function readStatusCookie(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.cookie.split("; ").some((c) => c === "subscribed=1");
-}
-
-export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const [isSubscribed, setIsSubscribed] = useState(false);
+export function SubscriptionProvider({
+  initialSubscribed,
+  children,
+}: {
+  initialSubscribed: boolean;
+  children: ReactNode;
+}) {
+  const [isSubscribed, setIsSubscribed] = useState(initialSubscribed);
   const [optimistic, setOptimistic] = useOptimistic(isSubscribed);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setIsSubscribed(readStatusCookie());
-  }, []);
 
   function subscribe() {
     startTransition(async () => {
