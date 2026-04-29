@@ -32,7 +32,7 @@ async function getCategories() {
   return fetchAPI<Category[]>("/categories");
 }
 
-async function SearchContent({
+async function SearchFormLoader({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -41,32 +41,21 @@ async function SearchContent({
   const categories = await getCategories();
 
   return (
-    <>
-      <div className="mb-10">
-        <SearchForm
-          initialQuery={q}
-          initialCategory={category}
-          categories={categories}
-        />
-      </div>
-
-      <Suspense key={`${q}-${category}`} fallback={<SearchResultsSkeleton />}>
-        <SearchResults query={q} category={category} />
-      </Suspense>
-    </>
+    <SearchForm
+      initialQuery={q}
+      initialCategory={category}
+      categories={categories}
+    />
   );
 }
 
-function SearchPageSkeleton() {
-  return (
-    <div className="animate-pulse space-y-10">
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="h-12 flex-1 rounded-xl bg-black/5" />
-        <div className="h-12 w-48 rounded-xl bg-black/5" />
-      </div>
-      <SearchResultsSkeleton />
-    </div>
-  );
+async function SearchResultsLoader({
+  searchParams,
+}: {
+  searchParams: SearchParams;
+}) {
+  const { q = "", category = "" } = await searchParams;
+  return <SearchResults query={q} category={category} />;
 }
 
 export default function Search({
@@ -81,8 +70,22 @@ export default function Search({
           Search Articles
         </h1>
 
-        <Suspense fallback={<SearchPageSkeleton />}>
-          <SearchContent searchParams={searchParams} />
+        <div className="mb-10">
+          <Suspense
+            fallback={
+              <div className="flex animate-pulse flex-col gap-4 sm:flex-row">
+                <div className="h-12 flex-1 rounded-full bg-black/5" />
+                <div className="h-12 w-40 rounded-full bg-black/5" />
+                <div className="h-12 w-24 rounded-full bg-black/5" />
+              </div>
+            }
+          >
+            <SearchFormLoader searchParams={searchParams} />
+          </Suspense>
+        </div>
+
+        <Suspense fallback={<SearchResultsSkeleton />}>
+          <SearchResultsLoader searchParams={searchParams} />
         </Suspense>
       </div>
     </section>
