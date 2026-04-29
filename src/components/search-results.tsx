@@ -5,7 +5,7 @@ import { ArticleCard } from "@/components/article-card";
 
 async function searchArticles(query: string, category: string) {
   "use cache";
-  cacheLife("minutes");
+  cacheLife("hours");
   cacheTag("search-results");
 
   const params: Record<string, string> = { limit: "5" };
