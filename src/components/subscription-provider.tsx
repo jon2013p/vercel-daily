@@ -16,6 +16,7 @@ import {
 
 interface SubscriptionContextValue {
   isSubscribed: boolean;
+  confirmedSubscribed: boolean;
   isPending: boolean;
   subscribe: () => void;
   unsubscribe: () => void;
@@ -23,6 +24,7 @@ interface SubscriptionContextValue {
 
 const SubscriptionContext = createContext<SubscriptionContextValue>({
   isSubscribed: false,
+  confirmedSubscribed: false,
   isPending: false,
   subscribe: () => {},
   unsubscribe: () => {},
@@ -59,7 +61,7 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <SubscriptionContext value={{ isSubscribed: optimistic, isPending, subscribe, unsubscribe }}>
+    <SubscriptionContext value={{ isSubscribed: optimistic, confirmedSubscribed: isSubscribed, isPending, subscribe, unsubscribe }}>
       {children}
     </SubscriptionContext>
   );

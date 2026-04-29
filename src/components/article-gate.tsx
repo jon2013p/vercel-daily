@@ -14,9 +14,9 @@ export function ArticleGate({
   article: Article;
   isSubscribed: boolean;
 }) {
-  const { isSubscribed } = useSubscription();
+  const { confirmedSubscribed } = useSubscription();
 
-  if (isSubscribed || serverIsSubscribed) {
+  if (confirmedSubscribed || serverIsSubscribed) {
     return (
       <>
         <ArticleHeader article={article} />
