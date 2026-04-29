@@ -1,15 +1,11 @@
 import { Suspense } from "react";
 import { cacheLife, cacheTag } from "next/cache";
-import { headers } from "next/headers";
 import { fetchAPI } from "@/lib/api";
 import { getSubscription } from "@/lib/subscription";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Article } from "@/lib/types";
-import { ArticleHeader } from "@/components/article-header";
-import { ArticleFeaturedImage } from "@/components/article-featured-image";
-import { ArticleContent } from "@/components/article-content";
-import { ArticlePaywall } from "@/components/article-paywall";
+import { ArticleGate } from "@/components/article-gate";
 import { TrendingArticles } from "@/components/trending-articles";
 
 type Params = Promise<{ id: string }>;
@@ -49,29 +45,12 @@ export async function generateMetadata({
 
 async function ArticleView({ params }: { params: Params }) {
   const { id } = await params;
-  const reqHeaders = await headers();
-  const status = reqHeaders.get("x-subscription-status");
-
   const article = await getArticle(id);
   if (!article) notFound();
 
-  if (status === "anonymous") {
-    return <ArticlePaywall article={article} />;
-  }
-
   const { isSubscribed } = await getSubscription();
 
-  if (isSubscribed) {
-    return (
-      <>
-        <ArticleHeader article={article} />
-        <ArticleFeaturedImage src={article.image} alt={article.title} />
-        <ArticleContent content={article.content} tags={article.tags} />
-      </>
-    );
-  }
-
-  return <ArticlePaywall article={article} />;
+  return <ArticleGate article={article} isSubscribed={isSubscribed} />;
 }
 
 async function TrendingWithExclusion({ params }: { params: Params }) {
