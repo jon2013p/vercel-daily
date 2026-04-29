@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -51,20 +50,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const initialSubscribed = cookieStore.get("subscribed")?.value === "1";
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SubscriptionProvider initialSubscribed={initialSubscribed}>
+        <SubscriptionProvider>
         <Suspense
           fallback={
             <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white py-6">
