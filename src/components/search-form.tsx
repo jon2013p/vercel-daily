@@ -43,7 +43,7 @@ export function SearchForm({
   }, [searchParams]);
 
   useEffect(() => {
-    if (query.length >= 3) {
+    if (query.length >= 3 || query.length === 0) {
       const timeout = setTimeout(() => pushSearch(query, category), 300);
       return () => clearTimeout(timeout);
     }
