@@ -74,7 +74,7 @@ export async function setSubscriptionCookies(token: string) {
   cookieStore.set(STATUS_COOKIE, "1", {
     ...COOKIE_SHARED,
     httpOnly: false,
-    maxAge: 5,
+    maxAge: 60 * 60 * 24,
   });
 }
 
