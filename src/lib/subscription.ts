@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { cacheLife } from "next/cache";
-import { fetchAPI } from "@/lib/api";
 
 export const TOKEN_COOKIE = "subscription_token";
 export const STATUS_COOKIE = "subscribed";
