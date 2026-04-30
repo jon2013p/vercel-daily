@@ -47,7 +47,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   function subscribe() {
     startTransition(async () => {
       setOptimistic(true);
-      await subscribeAction();
+      const result = await subscribeAction();
+      if (result.error) {
+        setOptimistic(false);
+        return;
+      }
       setIsSubscribed(true);
     });
   }
@@ -55,7 +59,11 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   function unsubscribe() {
     startTransition(async () => {
       setOptimistic(false);
-      await unsubscribeAction();
+      const result = await unsubscribeAction();
+      if (result.error) {
+        setOptimistic(true);
+        return;
+      }
       setIsSubscribed(false);
     });
   }

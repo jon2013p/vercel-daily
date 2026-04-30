@@ -1,18 +1,32 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import {
+  TOKEN_COOKIE,
+  STATUS_COOKIE,
+  HEADER_STATUS,
+} from "@/lib/subscription";
 
-const COOKIE_NAME = "subscription_token";
+function forward(headers: Headers) {
+  return NextResponse.next({ request: { headers } });
+}
 
 export async function proxy(request: NextRequest) {
-  const token = request.cookies.get(COOKIE_NAME)?.value;
   const reqHeaders = new Headers(request.headers);
+  const token = request.cookies.get(TOKEN_COOKIE)?.value;
 
-  reqHeaders.set(
-    "x-subscription-status",
-    token ? "authenticated" : "anonymous",
-  );
+  if (!token) {
+    reqHeaders.set(HEADER_STATUS, "inactive");
+    return forward(reqHeaders);
+  }
 
-  return NextResponse.next({ request: { headers: reqHeaders } });
+  const activeSignal = request.cookies.get(STATUS_COOKIE)?.value;
+  if (activeSignal === "1") {
+    reqHeaders.set(HEADER_STATUS, "active");
+    return forward(reqHeaders);
+  }
+
+  reqHeaders.set("x-subscription-token", token);
+  return forward(reqHeaders);
 }
 
 export const config = {
