@@ -5,6 +5,10 @@ import { fetchAPI } from "@/lib/api";
 import { SearchForm } from "@/components/search-form";
 import { SearchResults } from "@/components/search-results";
 import { SearchResultsSkeleton } from "@/components/search-results-skeleton";
+import {
+  SearchTransitionProvider,
+  SearchLoadingWrapper,
+} from "@/components/search-transition-provider";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -32,21 +36,9 @@ async function getCategories() {
   return fetchAPI<Category[]>("/categories");
 }
 
-async function SearchFormLoader({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
-  const { q = "", category = "" } = await searchParams;
+async function SearchFormLoader() {
   const categories = await getCategories();
-
-  return (
-    <SearchForm
-      initialQuery={q}
-      initialCategory={category}
-      categories={categories}
-    />
-  );
+  return <SearchForm categories={categories} />;
 }
 
 async function SearchResultsLoader({
@@ -70,23 +62,27 @@ export default function Search({
           Search Articles
         </h1>
 
-        <div className="mb-10">
-          <Suspense
-            fallback={
-              <div className="flex animate-pulse flex-col gap-4 sm:flex-row">
-                <div className="h-12 flex-1 rounded-full bg-black/5" />
-                <div className="h-12 w-40 rounded-full bg-black/5" />
-                <div className="h-12 w-24 rounded-full bg-black/5" />
-              </div>
-            }
-          >
-            <SearchFormLoader searchParams={searchParams} />
-          </Suspense>
-        </div>
+        <SearchTransitionProvider>
+          <div className="mb-10">
+            <Suspense
+              fallback={
+                <div className="flex animate-pulse flex-col gap-4 sm:flex-row">
+                  <div className="h-12 flex-1 rounded-full bg-black/5" />
+                  <div className="h-12 w-40 rounded-full bg-black/5" />
+                  <div className="h-12 w-24 rounded-full bg-black/5" />
+                </div>
+              }
+            >
+              <SearchFormLoader />
+            </Suspense>
+          </div>
 
-        <Suspense fallback={<SearchResultsSkeleton />}>
-          <SearchResultsLoader searchParams={searchParams} />
-        </Suspense>
+          <SearchLoadingWrapper>
+            <Suspense fallback={<SearchResultsSkeleton />}>
+              <SearchResultsLoader searchParams={searchParams} />
+            </Suspense>
+          </SearchLoadingWrapper>
+        </SearchTransitionProvider>
       </div>
     </section>
   );
