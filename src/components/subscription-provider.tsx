@@ -3,9 +3,8 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useOptimistic,
-  useState,
+  useSyncExternalStore,
   useTransition,
   type ReactNode,
 } from "react";
@@ -30,41 +29,31 @@ const SubscriptionContext = createContext<SubscriptionContextValue>({
   unsubscribe: () => {},
 });
 
-function readStatusCookie(): boolean {
-  if (typeof document === "undefined") return false;
+function subscribeFn(cb: () => void) {
+  const id = setInterval(cb, 1000);
+  return () => clearInterval(id);
+}
+
+function getSnapshot(): boolean {
   return document.cookie.split("; ").some((c) => c === "subscribed=1");
 }
 
-export function SubscriptionProvider({ children }: { children: ReactNode }) {
-  const [isSubscribed, setIsSubscribed] = useState(false);
+export function SubscriptionProvider({ children, initialSubscribed }: { children: ReactNode; initialSubscribed: boolean }) {
+  const isSubscribed = useSyncExternalStore(subscribeFn, getSnapshot, () => initialSubscribed);
   const [optimistic, setOptimistic] = useOptimistic(isSubscribed);
   const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setIsSubscribed(readStatusCookie());
-  }, []);
 
   function subscribe() {
     startTransition(async () => {
       setOptimistic(true);
-      const result = await subscribeAction();
-      if (result.error) {
-        setOptimistic(false);
-        return;
-      }
-      setIsSubscribed(true);
+      await subscribeAction();
     });
   }
 
   function unsubscribe() {
     startTransition(async () => {
       setOptimistic(false);
-      const result = await unsubscribeAction();
-      if (result.error) {
-        setOptimistic(true);
-        return;
-      }
-      setIsSubscribed(false);
+      await unsubscribeAction();
     });
   }
 
